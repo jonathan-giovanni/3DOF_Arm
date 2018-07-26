@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Kinematics">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../KinematicRepo/out/artifacts/Kinematics_jar/Kinematics.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
