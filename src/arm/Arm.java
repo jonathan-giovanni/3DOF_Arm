@@ -66,6 +66,7 @@ public class Arm {
             Q[2] = Math.toRadians(q[2]);
         }
 
+        //Q[0] = -1*Q[0];
 
 
 
@@ -87,14 +88,14 @@ public class Arm {
         /**     base rotatoria      **/
         context.fill(255, 200, 75,100);
         context.translate(0, 0, 4);//para que se posicione arriba
-        context.rotateY((float) (Q[0]  + Math.PI/2));//gamma
+        context.rotateY((float) (-Q[0]  + Math.PI/2));//gamma
         //context.rotate(context.PI);
         context.shape(shoulder);
         /**     antebrazo           **/
         context.fill(60, 200, 130,100);
         context.translate(0, 0, 25);
         context.rotateY(context.PI);
-        context.rotateX((float) (Q[1]));//alpha
+        context.rotateX((float) (-Q[1]));//alpha
         context.shape(upArm);
         /**      brazo               **/
         context.fill(60, 130, 200,100);
