@@ -9,11 +9,20 @@ public class frmArmController extends Window{
     private JSlider slider1;
     private JSlider slider2;
     private JSlider slider3;
-    private JLabel lblQ1;
-    private JLabel lblQ2;
-    private JLabel lblQ3;
     private JLabel lblCoord;
     private JPanel panel1;
+    private JTextField txtQ1;
+    private JTextField txtQ2;
+    private JTextField txtQ3;
+    private JButton xButton1;
+    private JTextField textField1;
+    private JButton xButton;
+    private JButton yButton;
+    private JButton yButton1;
+    private JTextField textField2;
+    private JButton zButton;
+    private JTextField textField3;
+    private JButton zButton1;
 
     public static double angles[] = new double[]{0,0,0};
 
@@ -24,17 +33,17 @@ public class frmArmController extends Window{
 
 
         slider1.addChangeListener(a ->{
-            lblQ1.setText(slider1.getValue()+"");
+            txtQ1.setText(slider1.getValue()+"");
             applyFK(0,slider1.getValue());
         });
 
         slider2.addChangeListener(a ->{
-            lblQ2.setText(slider2.getValue()+"");
+            txtQ2.setText(slider2.getValue()+"");
             applyFK(1,slider2.getValue());
         });
 
         slider3.addChangeListener(a ->{
-            lblQ3.setText(slider3.getValue()+"");
+            txtQ3.setText(slider3.getValue()+"");
             applyFK(2,slider3.getValue());
         });
 
@@ -68,7 +77,11 @@ public class frmArmController extends Window{
         arm.setAngles(angles,true);
         if(fk!=null) {
             coords =  fk.getCartesian(angles, true);
-            lblCoord.setText(Arrays.toString(coords));
+            double c1 = (double)Math.round(coords[0] * 10000d) / 10000d;
+            double c2 = (double)Math.round(coords[1] * 10000d) / 10000d;
+            double c3 = (double)Math.round(coords[2] * 10000d) / 10000d;
+
+            lblCoord.setText("[ "+c1+" , "+c2 + " , "+c3+" ]");
         }
     }
 }
