@@ -17,6 +17,14 @@
         <jarDirectory url="file:///Applications/Processing 2.app/Contents/Java/core/library" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Kinematics" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../KinematicRepo/out/artifacts/Kinematics_jar/Kinematics.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

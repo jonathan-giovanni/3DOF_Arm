@@ -60,9 +60,9 @@ public class Window extends PApplet {
     PVector origin;
     static Arm arm;
     float rX,rY,zoom,size;
-    protected InverseK ik;
+    protected static InverseK ik;
     protected static ForwardK fk;
-    public static double coords[];
+    public static double coords[] = {110,0,28};
 
     @Override
     public void settings() {
