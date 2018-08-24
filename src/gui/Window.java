@@ -112,14 +112,6 @@ public class Window extends PApplet {
         popMatrix();
 
 
-        pushMatrix();
-        noStroke();
-        fill(50,50,250);
-        translate(40,40,40);
-        sphere(10);
-        popMatrix();
-
-
     }
 
     @Override
