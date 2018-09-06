@@ -62,7 +62,7 @@ public class Window extends PApplet {
     float rX,rY,zoom,size;
     protected static InverseK ik;
     protected static ForwardK fk;
-    public static double coords[] = {110,0,28};
+    public static double coords[] = {0,110,28};
 
     @Override
     public void settings() {
@@ -81,7 +81,7 @@ public class Window extends PApplet {
         arm     = new Arm(this);
         ik      = new InverseK(arm.getL());
         fk      = new ForwardK(arm.getL());
-        coords  = new double[]{0,0,0};
+        coords  = new double[]{0,110,28};
         //arm.setAngles(angles,false);
 
     }
@@ -107,7 +107,7 @@ public class Window extends PApplet {
         pushMatrix();
         noStroke();
         fill(250,50,50);
-        translate((float)coords[0],(float)coords[1],(float)coords[2]);
+        translate((float)coords[1],(float)coords[0],(float)coords[2]);
         sphere(10);
         popMatrix();
 
@@ -141,8 +141,8 @@ public class Window extends PApplet {
     private void drawAxes() {
         float margin = 90;
         //X rojo
-        text("+X",margin,-2,0);
-        text("-X",-margin,-2,0);
+        text("+Y",margin,-2,0);
+        text("-Y",-margin,-2,0);
         stroke(210, 0, 0);
         line(-size,0,0,size,0,0);
 
@@ -153,8 +153,8 @@ public class Window extends PApplet {
         line(0,-size,0,0,size,0);
 
         //Z azul
-        text("+Y",5,0,margin);
-        text("-Y",5,0,-margin);
+        text("+X",5,0,margin);
+        text("-X",5,0,-margin);
         stroke(0, 0, 210);
         line(0, 0, -size,0,0, size);
     }

@@ -88,20 +88,27 @@ public class Arm {
         /**     base rotatoria      **/
         context.fill(255, 200, 75,100);
         context.translate(0, 0, 4);//para que se posicione arriba
-        context.rotateY((float) (-Q[0]  + Math.PI/2));//gamma
+        float anguloBase = (float) (-Q[0]  + Math.PI/2);
+        System.out.println("Base rotatoria real:      "+anguloBase);
+        context.rotateY(anguloBase);//gamma
+        //context.rotateY( (float) Math.PI-  (float)Q[0]);
         //context.rotate(context.PI);
         context.shape(shoulder);
         /**     antebrazo           **/
         context.fill(60, 200, 130,100);
         context.translate(0, 0, 25);
         context.rotateY(context.PI);
-        context.rotateX((float) (-Q[1]));//alpha
+        float anguloAntebrazo = (float) (-Q[1]);
+        System.out.println("Antebrazo  real :     "+ anguloAntebrazo);
+        context.rotateX(anguloAntebrazo);//alpha
         context.shape(upArm);
         /**      brazo               **/
         context.fill(60, 130, 200,100);
         context.translate(0, -50, 0);
         context.rotateY(context.PI);
-        context.rotateX((float) (Q[2]  ));//beta
+        float anguloBrazo= (float) (Q[2]  );
+        System.out.println("Brazo real :        "+anguloBrazo);
+        context.rotateX(anguloBrazo);//beta
         context.shape(loArm);
         /**     orientacion         **/
         context.fill(250, 100, 100,100);

@@ -1,46 +1,13 @@
 
-import arm.Arm;
-import com.sun.tools.internal.ws.wsdl.document.Input;
-import gui.Window;
-import gui.frmArmController;
 import kinematics.ForwardK;
 import kinematics.InverseK;
-import neuralNet.ApplyMLP;
-import neuralNet.mlp.MultiLayerPerceptron;
-import neuralNet.mlp.transferfunctions.HyperbolicTransfer;
-import neuralNet.mlp.transferfunctions.SigmoidalTransfer;
-import processing.core.PApplet;
-import utils.PRECISION;
 
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Array;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
-import static java.lang.Math.cos;
 
 public class Main {
-
-    private static final long MEGABYTE_FACTOR = 1024L * 1024L;
-    private static final DecimalFormat ROUNDED_DOUBLE_DECIMALFORMAT;
-    private static final String MIB = "MiB";
-
-    static {
-        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
-        otherSymbols.setDecimalSeparator('.');
-        otherSymbols.setGroupingSeparator(',');
-        ROUNDED_DOUBLE_DECIMALFORMAT = new DecimalFormat("####0.00", otherSymbols);
-        ROUNDED_DOUBLE_DECIMALFORMAT.setGroupingUsed(false);
-    }
 
     public static void main(String[] args) {
         System.out.println("\nPruebas de cinematica\n\n");
@@ -51,9 +18,82 @@ public class Main {
         //PApplet.main(pWindow.getClass());
 
 
+
+        double L[] = {28,50,60};
+
+        double Q1min= 0;
+        double Q1max= 90;
+
+        double Q2min= -90;
+        double Q2max= 0;
+
+        double n=30; // para 30 son 900 datos , para 50 son 2500 datos y para 90 datos son 8,100
+        double step1 = (Q1max-Q1min)/(n-1);
+        double step2 = (Q2max-Q2min)/(n-1);
+
+        ForwardK fk = new ForwardK(L);
+        InverseK ik = new InverseK(L);
+
+        /**variables para guardar datos de entrenamiento*/
+        ArrayList<double[]> input  = new ArrayList<>();
+        ArrayList<double[]> output = new ArrayList<>();
+        /**minimos y maximos de cada una de las evaluaciones*/
+        double Ymin= 0 ,Ymax= 110,Zmin= -32,Zmax= 138;
+
+        int decimals = 5;
+
+        //falta normalizar los datos
+
+
+
+        int c=0;
+        for(double i=Q1min;i<Q1max;i+=step1){
+            for(double j=Q2min;j<Q2max;j+=step2){
+
+                System.out.println("Iteracion "+ (c+1));
+
+                double angles[] = {0, justNdecimals( i , decimals),  justNdecimals( j ,decimals) };
+
+                output.add( new double[]{ i,j });// agregando la salida
+
+                System.out.println("Angulo " + Arrays.toString(angles) );
+                double coord[] = fk.getCartesian(angles,false);
+
+                coord[1] = justNdecimals(coord[1],decimals);
+                coord[2] = justNdecimals(coord[2],decimals);
+
+                input.add( new double[]{ coord[1],coord[2] }); // coordenada Y Z
+
+                System.out.println("fk Coordenadas "+Arrays.toString(coord));
+
+                /*
+                double n_angles[] = ik.getAngles(coord);
+                n_angles[0] = Math.toDegrees(n_angles[0]);
+                n_angles[1] = Math.toDegrees(n_angles[1]);
+                n_angles[2] = Math.toDegrees(n_angles[2]);
+                System.out.println("ik Angulo " + Arrays.toString(n_angles) );
+
+                double coordik[] = fk.getCartesian(n_angles,false);
+                System.out.println("Coord ik "+Arrays.toString(coordik));
+                */
+                System.out.println();
+                c++;
+            }
+        }
+        /** Se debe normalizar cada uno de los datos de entrenamiento*/
+
+        System.out.println("Ymax "+ Ymax+" Ymin "+Ymin);
+        System.out.println("Zmax "+ Zmax+" Zmin "+Zmin);
+
+        //double in_normalized[] = neuralNet.Input.Normalize(in,Xmin,Xmax,0,1);
+        //System.out.println("Input         : "+Arrays.toString(in));
+        //System.out.println("Normalized in : "+Arrays.toString(in_normalized));
+        //System.out.println("Output        : "+Arrays.toString(out));
+
+
         /**
          * inicio algoritmo
-         */
+         *
 
 
 
@@ -73,6 +113,7 @@ public class Main {
         System.out.println("Angulos de salida       : "+Arrays.toString(ik.getAngles(coords)));
 
 
+        */
 
         /*
 
@@ -89,6 +130,7 @@ public class Main {
 
         */
 
+        /*
 
         ArrayList<double[]> in  = neuralNet.Input.loadFile("input_normalized.txt");
 
@@ -111,7 +153,7 @@ public class Main {
         PrintWriter fout = null;
         //try {
             //fout = new PrintWriter(new FileWriter("error_train.txt"));
-            while ( j<=12000   /* || error >= 0.03*/) {
+            while ( j<=12000   ) {
 
                 error_prev = error;
 
@@ -191,29 +233,6 @@ public class Main {
             double er2_abs = er2 = Math.abs(er2);
 
 
-            if( Math.abs( er1 ) >=0.04){
-                /*if(er1>0){
-                    ou_normalizated[0] += (er1_abs)/2;
-                }else{
-                    ou_normalizated[0] -= (er1_abs)/2;
-                }*/
-
-                if(er1>0)
-                    ou_normalizated[0] = ou_normalizated[0] - (er1*0.55);
-                else
-                    ou_normalizated[0] = ou_normalizated[0] + (er1*0.55);
-                //ou_normalizated[0] = ta_normalizated[0] + -1*(er1)/9;
-            }
-
-
-            if( Math.abs( er2 ) >=0.03){
-                /*if(er2>0){
-                    ou_normalizated[1] -= ( er1_abs)/2;
-                }else{
-                    ou_normalizated[1] += ( er1_abs)/2;
-                }*/
-                ou_normalizated[1] = ou_normalizated[1] + (er2/2) ;
-            }
 
             System.out.println("in     : "+Arrays.toString(in.get(i)) );
             System.out.println("out    : "+Arrays.toString(out.get(i)));
@@ -248,10 +267,6 @@ public class Main {
 
 
 
-        /**
-         * fin algoritmo
-         */
-
 
         //92% aprobados con 100k iteraciones  factor de aprendizaje 0.05
         //86% aprobados con 10k iteraciones factor de aprendizaje 0.05
@@ -268,29 +283,6 @@ public class Main {
 
 
         /*
-
-        double x1=-Math.PI;
-        double x2=Math.PI;
-        double n=200;
-        double step = (x2-x1)/(n-1);
-        double in[][]  = new double[200][];
-        double out[][] = new double[200][];
-        int c=0;
-        double Xmin=1000,Xmax=-1000;
-        for(double i=x1;i<x2;i+=step){
-            in[c]  = new double[]{L[2] * cos(i) + L[1] * cos(i)} ;
-            out[c] = new double[]{i};
-
-            Xmin = (in[c][0]<Xmin)?in[c][0]:Xmin;
-            Xmax = (in[c][0]>Xmax)?in[c][0]:Xmax;
-
-            c++;
-        }
-
-        //double in_normalized[] = neuralNet.Input.Normalize(in,Xmin,Xmax,0,1);
-        System.out.println("Input         : "+Arrays.toString(in));
-        //System.out.println("Normalized in : "+Arrays.toString(in_normalized));
-        System.out.println("Output        : "+Arrays.toString(out));
 
 
 
@@ -388,59 +380,29 @@ public class Main {
         return (double)Math.round(input * Math.pow(10,limit)) / Math.pow(10,limit);
     }
 
-    public static double getProcessCpuLoad() throws Exception {
-
-        MBeanServer mbs    = ManagementFactory.getPlatformMBeanServer();
-        ObjectName name    = ObjectName.getInstance("java.lang:type=OperatingSystem");
-        AttributeList list = mbs.getAttributes(name, new String[]{ "ProcessCpuLoad" });
-
-        if (list.isEmpty())     return Double.NaN;
-
-        Attribute att = (Attribute)list.get(0);
-        Double value  = (Double)att.getValue();
-
-        // usually takes a couple of seconds before we get real values
-        if (value == -1.0)      return Double.NaN;
-        // returns a percentage value with 1 decimal point precision
-        return ((int)(value * 1000) / 10.0);
+    static public Double round2(Double val) {
+        return new BigDecimal(val.toString()).setScale(3, RoundingMode.HALF_UP).doubleValue();
     }
 
 
-    public static void freeMemory() {
-        System.gc();
-        System.runFinalization();
+    public static double justNdecimals(double x, int numberofDecimals)
+    {
+        if ( x > 0) {
+            x = new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR).doubleValue();
+        } else {
+            x = new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_CEILING).doubleValue();
+        }
+        x = checkRound(x);
+        return x;
     }
 
-    public static StringBuffer getMemoryInfo() {
-        StringBuffer buffer = new StringBuffer();
-
-        freeMemory();
-
-        Runtime runtime = Runtime.getRuntime();
-        double usedMemory = usedMemory(runtime);
-        double maxMemory = maxMemory(runtime);
-
-        NumberFormat f = new DecimalFormat("###,##0.000");
-
-        String lineSeparator = System.getProperty("line.separator");
-        buffer.append("Used memory: " + f.format(usedMemory) + "MB").append(lineSeparator);
-        buffer.append("Max available memory: " + f.format(maxMemory) + "MB").append(lineSeparator);
-        return buffer;
+    public static double checkRound(double x){
+        int decimal = (int)Math.abs(x);
+        double fractional = x - decimal;
+        fractional = 1 - fractional;
+        if(fractional<=0.001){
+            return Math.round(x);
+        }else return x;
     }
-
-    static double usedMemory(Runtime runtime) {
-        long totalMemory = runtime.totalMemory();
-        long freeMemory = runtime.freeMemory();
-        double usedMemory = (double)(totalMemory - freeMemory) / (double)(1024 * 1024);
-        return usedMemory;
-    }
-
-    static double maxMemory(Runtime runtime) {
-        long maxMemory = runtime.totalMemory();
-        double memory = (double)maxMemory / (double)(1024 * 1024);
-        return memory;
-    }
-
-
 
 }

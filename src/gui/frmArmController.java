@@ -19,7 +19,6 @@ public class frmArmController extends Window{
     private JButton btnPlusX;
     private JTextField txtX;
     private JTextField textField2;
-    private JTextField textField3;
     private JComboBox comboBox1;
     private JButton btnMinusY;
     private JButton btnMinusZ;
@@ -28,15 +27,31 @@ public class frmArmController extends Window{
     private JTextField txtY;
     private JTextField txtZ;
     private JLabel lblAngles;
+    private JButton entrenarButton;
+    private JProgressBar progressBar1;
+    private JButton xButton;
+    private JTextField textField1;
+    private JButton xButton1;
+    private JButton yButton;
+    private JTextField textField3;
+    private JButton yButton1;
+    private JButton zButton;
+    private JTextField textField4;
+    private JButton zButton1;
 
     public static double angles[] = new double[]{0,0,0};
 
     public double step = 0.5;
 
+
+    double init_coords[] = {0,110,28};
+
     public frmArmController(){
 
 
-        coords = new double[]{110,0,28};
+
+
+        coords = new double[]{0,110,28};
 
 
         slider1.addChangeListener(a ->{
@@ -66,6 +81,12 @@ public class frmArmController extends Window{
             applyIK(0,v);
             txtX.setText( v+"" );
         });
+
+        txtX.addActionListener(a->{
+            double v =  decimals( Double.parseDouble(txtX.getText()),1);
+            applyIK(0,v);
+        });
+
         // -- Y
         btnPlusY.addActionListener(a-> {
             double v =  decimals( Double.parseDouble(txtY.getText()) + step,1);
@@ -77,6 +98,10 @@ public class frmArmController extends Window{
             applyIK(1,v);
             txtY.setText( v+"" );
         });
+        txtY.addActionListener(a->{
+            double v =  decimals( Double.parseDouble(txtY.getText()),1);
+            applyIK(1,v);
+        });
         // -- Z
         btnPlusZ.addActionListener(a-> {
             double v =  decimals( Double.parseDouble(txtZ.getText()) + step,1);
@@ -87,6 +112,10 @@ public class frmArmController extends Window{
             double v =  decimals( Double.parseDouble(txtZ.getText()) - step,1);
             applyIK(2,v);
             txtZ.setText( v+"" );
+        });
+        txtZ.addActionListener(a->{
+            double v =  decimals( Double.parseDouble(txtZ.getText()),1);
+            applyIK(2,v);
         });
 
 
@@ -102,6 +131,7 @@ public class frmArmController extends Window{
         frame.pack();
         frame.setVisible(true);
 
+        coords = init_coords;
     }
 
     @Override
@@ -132,11 +162,21 @@ public class frmArmController extends Window{
         coords[coordChanged] = value;
         System.out.println("coordenadas "+ Arrays.toString(coords));
         if(ik!=null) {
-            angles =  ik.getAngles(coords);
-            double a[] = decimals(angles,4);
-            lblAngles.setText(Arrays.toString(angles));
-            System.out.println(Arrays.toString(angles));
-            arm.setAngles(angles,true);
+
+            double anglesTemp[] =  ik.getAngles(coords);
+            //double a[] = decimals(angles,4);
+            String contenido = Arrays.toString( rad2degrees( anglesTemp) );
+
+            lblAngles.setText(contenido);
+            System.out.println(Arrays.toString(anglesTemp));
+
+            if( !Double.isNaN( anglesTemp[0]) &&  !Double.isNaN( anglesTemp[1] ) && !Double.isNaN(anglesTemp[2]) ){
+                angles = anglesTemp;
+                arm.setAngles(angles,true);
+            }else{
+                contenido+= " Error se sobre pasa el espacio de trabajo";
+                lblAngles.setText(contenido);
+            }
         }
     }
 
@@ -151,5 +191,13 @@ public class frmArmController extends Window{
 
     private double decimals(double input,int limit){
         return (double)Math.round(input * Math.pow(10,limit)) / Math.pow(10,limit);
+    }
+
+    private double[] rad2degrees(double inputs[]){
+        double degree[] = new double[3];
+        for(int i=0;i<inputs.length;i++){
+            degree[i] = inputs[i]*180/Math.PI;
+        }
+        return degree;
     }
 }
