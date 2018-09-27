@@ -309,14 +309,14 @@
                   <text value="Capas Ocultas"/>
                 </properties>
               </component>
-              <component id="7eaab" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+              <component id="7eaab" class="javax.swing.JTextField" binding="txtHidenLayers">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
-                  <text value=""/>
+                  <text value="10"/>
                 </properties>
               </component>
               <component id="8ef78" class="javax.swing.JLabel">
@@ -327,21 +327,7 @@
                   <text value="Datos de entrenamiento"/>
                 </properties>
               </component>
-              <component id="6c35e" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Función Activación"/>
-                </properties>
-              </component>
-              <component id="343f4" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
-                <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="bc308" class="javax.swing.JComboBox" default-binding="true">
+              <component id="bc308" class="javax.swing.JComboBox" binding="cmbTrainOptions">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -355,20 +341,14 @@
                   <text value="Número de epocas"/>
                 </properties>
               </component>
-              <component id="eddf3" class="javax.swing.JTextField" default-binding="true">
+              <component id="eddf3" class="javax.swing.JTextField" binding="txtEpoch">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
-              </component>
-              <component id="349c0" class="javax.swing.JButton" binding="entrenarButton" default-binding="true">
-                <constraints>
-                  <grid row="2" column="2" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
                 <properties>
-                  <text value="Entrenar"/>
+                  <text value="7000"/>
                 </properties>
               </component>
               <component id="eb737" class="javax.swing.JLabel">
@@ -379,11 +359,18 @@
                   <text value="Entrenamiento"/>
                 </properties>
               </component>
-              <component id="673f4" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
+              <component id="673f4" class="javax.swing.JProgressBar" binding="progressBarTraining">
                 <constraints>
-                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="-1" height="30"/>
+                    <preferred-size width="-1" height="30"/>
+                  </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <borderPainted value="true"/>
+                  <foreground color="-13074414"/>
+                  <indeterminate value="false"/>
+                </properties>
               </component>
               <component id="53139" class="javax.swing.JLabel">
                 <constraints>
@@ -393,12 +380,54 @@
                   <text value="Error de entrenamiento"/>
                 </properties>
               </component>
-              <component id="6ad52" class="javax.swing.JLabel">
+              <component id="6ad52" class="javax.swing.JLabel" binding="lblTrainError">
                 <constraints>
-                  <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Label"/>
+                  <text value="Error"/>
+                </properties>
+              </component>
+              <component id="e248d" class="javax.swing.JButton" binding="btnSaveNet">
+                <constraints>
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Guardar Red"/>
+                </properties>
+              </component>
+              <component id="fbc7f" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Factor de aprendizaje"/>
+                </properties>
+              </component>
+              <component id="a8246" class="javax.swing.JTextField" binding="txtLearningRate">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <text value="0.02"/>
+                </properties>
+              </component>
+              <component id="23d8c" class="javax.swing.JButton" binding="btnTrainNet">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Entrenar Red"/>
+                </properties>
+              </component>
+              <component id="9dd68" class="javax.swing.JButton" binding="btnLoadNet" default-binding="true">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Cargar Red"/>
                 </properties>
               </component>
             </children>
@@ -411,7 +440,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="76ba0" class="javax.swing.JButton" binding="xButton" default-binding="true">
+              <component id="76ba0" class="javax.swing.JButton" binding="btnXMinusNet">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -419,15 +448,18 @@
                   <text value="-X"/>
                 </properties>
               </component>
-              <component id="78efb" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+              <component id="78efb" class="javax.swing.JTextField" binding="txtXNet">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <horizontalAlignment value="0"/>
+                  <text value="0.0"/>
+                </properties>
               </component>
-              <component id="e204b" class="javax.swing.JButton" binding="xButton1" default-binding="true">
+              <component id="e204b" class="javax.swing.JButton" binding="btnXPlusNet">
                 <constraints>
                   <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -435,7 +467,7 @@
                   <text value="+X"/>
                 </properties>
               </component>
-              <component id="4cc49" class="javax.swing.JButton" binding="yButton" default-binding="true">
+              <component id="4cc49" class="javax.swing.JButton" binding="btnYMinusNet">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -443,15 +475,18 @@
                   <text value="-Y"/>
                 </properties>
               </component>
-              <component id="48edc" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+              <component id="48edc" class="javax.swing.JTextField" binding="txtYNet">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <horizontalAlignment value="0"/>
+                  <text value="110.0"/>
+                </properties>
               </component>
-              <component id="f3257" class="javax.swing.JButton" binding="yButton1" default-binding="true">
+              <component id="f3257" class="javax.swing.JButton" binding="btnYPlusNet">
                 <constraints>
                   <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -459,7 +494,7 @@
                   <text value="+Y"/>
                 </properties>
               </component>
-              <component id="6e762" class="javax.swing.JButton" binding="zButton" default-binding="true">
+              <component id="6e762" class="javax.swing.JButton" binding="btnZMinusNet">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -467,15 +502,18 @@
                   <text value="-Z"/>
                 </properties>
               </component>
-              <component id="989fe" class="javax.swing.JTextField" binding="textField4" default-binding="true">
+              <component id="989fe" class="javax.swing.JTextField" binding="txtZNet">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <horizontalAlignment value="0"/>
+                  <text value="28.0"/>
+                </properties>
               </component>
-              <component id="8e705" class="javax.swing.JButton" binding="zButton1" default-binding="true">
+              <component id="8e705" class="javax.swing.JButton" binding="btnZPlusNet">
                 <constraints>
                   <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -491,7 +529,7 @@
                   <text value="Angulos ANN"/>
                 </properties>
               </component>
-              <component id="16f64" class="javax.swing.JLabel">
+              <component id="16f64" class="javax.swing.JLabel" binding="lblAnglesNet">
                 <constraints>
                   <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -507,7 +545,7 @@
                   <text value="Angulos IK"/>
                 </properties>
               </component>
-              <component id="c5044" class="javax.swing.JLabel">
+              <component id="c5044" class="javax.swing.JLabel" binding="lblAnglesIkNet">
                 <constraints>
                   <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -523,7 +561,7 @@
                   <text value="Error"/>
                 </properties>
               </component>
-              <component id="eadeb" class="javax.swing.JLabel">
+              <component id="eadeb" class="javax.swing.JLabel" binding="lblErrorAnglesNet">
                 <constraints>
                   <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -539,7 +577,7 @@
                   <text value="Estado"/>
                 </properties>
               </component>
-              <component id="b714c" class="javax.swing.JLabel">
+              <component id="b714c" class="javax.swing.JLabel" binding="lblStateNet">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>

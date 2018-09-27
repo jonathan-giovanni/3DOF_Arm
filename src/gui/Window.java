@@ -7,9 +7,6 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 
-
-
-
 /**
  *
  * Sistemas de coordenadas en Processing
@@ -24,33 +21,18 @@ import processing.core.PVector;
  *          /  |
  *        +Z  +Y
  *
- * coordenadas con escala negativa
- *
- *            +Y  -Z
- *             |  /
- *             | /
- *             |/
- *    +X ------/------- -X
- *            /|
- *           / |
- *          /  |
- *        +Z  -Y
  *
  * Sistema de coordenadas en libreria
  *
- *            +Z  -Y
+ *            +Z  -X
  *             |  /
  *             | /
  *             |/
- *    -X ------/------- +X
+ *    -Y ------/------- +Y
  *            /|
  *           / |
  *          /  |
- *        +Y  -Z
- *
- * cambios Lib a Pro : +X a -X
- *                     +Y a +Z
- *                     +Z a -Y
+ *        +X  -Z
  *
  */
 
@@ -64,11 +46,18 @@ public class Window extends PApplet {
     protected static ForwardK fk;
     public static double coords[] = {0,110,28};
 
+    /**
+     * Establece el tamaño de la pantalla
+     */
     @Override
     public void settings() {
         size(800, 800, P3D);
     }
 
+    /**
+     * Establece el punto central, el angulo de vista y zoom
+     * Inicializa el brazo y la cinematica directa e inversa
+     */
     @Override
     public void setup() {
         smooth();
@@ -82,10 +71,14 @@ public class Window extends PApplet {
         ik      = new InverseK(arm.getL());
         fk      = new ForwardK(arm.getL());
         coords  = new double[]{0,110,28};
-        //arm.setAngles(angles,false);
 
     }
 
+    /**
+     * Se ejecuta 60 veces por segundo
+     * Dibuja el brazo con los angulos establecidos por FK,IK y ANN
+     * Agrega sombras y colores de fondo
+     */
     @Override
     public void draw() {
 
@@ -96,14 +89,13 @@ public class Window extends PApplet {
         scale(zoom);
 
         userInput();
-        drawAxes();
+        //drawAxes();
 
         scale(-1);// invierte
 
         arm.drawArm();
-        //arm.setAngles(angles,false);
-        //arm.setAngles(new double[]{90,0,0},false);
 
+        /**esfera de referencia*/
         pushMatrix();
         noStroke();
         fill(250,50,50);
@@ -114,11 +106,20 @@ public class Window extends PApplet {
 
     }
 
+    /**
+     * Cambia los ejes de processing a la libreria
+     * @param x
+     * @param y
+     * @param z
+     */
     @Override
     public void translate(float x, float y, float z) {
         super.translate(-x, z, -y); // cambios en ejes -x , z,-y
     }
 
+    /**
+     * Permite interactuar con el usuario: Mover la camara y hacer zoom
+     */
     private void userInput(){
         if(mousePressed){
             rX   -= (mouseY - pmouseY) * 0.002f;//map(mouseY,0,height,-PI,PI);
@@ -138,6 +139,9 @@ public class Window extends PApplet {
     }
 
 
+    /**
+     * Dibuja el eje segun referencias de libreria
+     */
     private void drawAxes() {
         float margin = 90;
         //X rojo

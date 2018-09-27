@@ -1,9 +1,17 @@
 
+import gui.Window;
+import gui.frmArmController;
 import kinematics.ForwardK;
 import kinematics.InverseK;
+import neuralNet.ApplyMLP;
+import neuralNet.Input;
+import neuralNet.mlp.TransferFunction;
+import neuralNet.mlp.transferfunctions.HyperbolicTransfer;
+import neuralNet.mlp.transferfunctions.SigmoidalTransfer;
+import processing.core.PApplet;
+import util.Numerics;
+import utils.PRECISION;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 
@@ -14,8 +22,12 @@ public class Main {
 
         Main m = new Main();
 
-        //Window pWindow = new frmArmController();
-        //PApplet.main(pWindow.getClass());
+        Window pWindow = new frmArmController();
+        PApplet.main(pWindow.getClass());
+
+
+        /** Pruebas
+
 
 
 
@@ -34,375 +46,74 @@ public class Main {
         ForwardK fk = new ForwardK(L);
         InverseK ik = new InverseK(L);
 
-        /**variables para guardar datos de entrenamiento*/
         ArrayList<double[]> input  = new ArrayList<>();
         ArrayList<double[]> output = new ArrayList<>();
-        /**minimos y maximos de cada una de las evaluaciones*/
+
         double Ymin= 0 ,Ymax= 110,Zmin= -32,Zmax= 138;
 
-        int decimals = 5;
-
-        //falta normalizar los datos
+        int decimals = 4;
 
 
+        Input generateInput = new Input(L, PRECISION.MEDIUM, Q1min,Q1max,Q2min,Q2max);
 
-        int c=0;
-        for(double i=Q1min;i<Q1max;i+=step1){
-            for(double j=Q2min;j<Q2max;j+=step2){
+        ArrayList< double[] >[] IO_data  =  generateInput.getInputs();
 
-                System.out.println("Iteracion "+ (c+1));
+        ApplyMLP applyMLP = new ApplyMLP( new int[]{2,10,2} ,0.02, new SigmoidalTransfer() ,IO_data[0],IO_data[1] );
 
-                double angles[] = {0, justNdecimals( i , decimals),  justNdecimals( j ,decimals) };
+        double trainError = applyMLP.train( 12000);
 
-                output.add( new double[]{ i,j });// agregando la salida
 
-                System.out.println("Angulo " + Arrays.toString(angles) );
-                double coord[] = fk.getCartesian(angles,false);
+        System.out.println("Layers " +Numerics.LAYER );
+        System.out.println("Epocas "+Numerics.EPOCH);
+        System.out.println("Precision "+Numerics.PRECISION);
 
-                coord[1] = justNdecimals(coord[1],decimals);
-                coord[2] = justNdecimals(coord[2],decimals);
 
-                input.add( new double[]{ coord[1],coord[2] }); // coordenada Y Z
+        System.out.println("\nPruebas de efectividad \n");
 
-                System.out.println("fk Coordenadas "+Arrays.toString(coord));
 
-                /*
-                double n_angles[] = ik.getAngles(coord);
-                n_angles[0] = Math.toDegrees(n_angles[0]);
-                n_angles[1] = Math.toDegrees(n_angles[1]);
-                n_angles[2] = Math.toDegrees(n_angles[2]);
-                System.out.println("ik Angulo " + Arrays.toString(n_angles) );
+        double errorPromQ1=0,errorPromQ2=0,aprobados=0;
 
-                double coordik[] = fk.getCartesian(n_angles,false);
-                System.out.println("Coord ik "+Arrays.toString(coordik));
-                */
-                System.out.println();
-                c++;
+        for(int i=0;i<IO_data[0].size();i++){
+
+            double in_denor[]  = { 0, Input.DeNormalize( IO_data[0].get(i)[0], Ymin,Ymax)  , Input.DeNormalize(IO_data[0].get(i)[1],Zmin,Zmax) };
+            double out_denor[] = {   Input.DeNormalize( IO_data[1].get(i)[0] , Q1min,Q1max ) , Input.DeNormalize( IO_data[1].get(i)[1] , Q2min,Q2max )   };
+
+
+            double result[] = applyMLP.execute(in_denor);
+
+            if(result==null){
+                result= new double[]{0,0,0};
             }
-        }
-        /** Se debe normalizar cada uno de los datos de entrenamiento*/
 
-        System.out.println("Ymax "+ Ymax+" Ymin "+Ymin);
-        System.out.println("Zmax "+ Zmax+" Zmin "+Zmin);
+            double error[] = {Math.abs( out_denor[0] - result[1]  ) , Math.abs( out_denor[1] - result[2]  )};
 
-        //double in_normalized[] = neuralNet.Input.Normalize(in,Xmin,Xmax,0,1);
-        //System.out.println("Input         : "+Arrays.toString(in));
-        //System.out.println("Normalized in : "+Arrays.toString(in_normalized));
-        //System.out.println("Output        : "+Arrays.toString(out));
+            errorPromQ1 += error[0];
+            errorPromQ2 += error[1];
 
-
-        /**
-         * inicio algoritmo
-         *
-
-
-
-        double L[] = new double[]{28,50,60};
-        double coords[] = {110,0,28};
-        double angles[] = {0,0,0};
-
-        ForwardK fk = new ForwardK(L);
-        InverseK ik = new InverseK(L);
-
-        System.out.println("Longitudes de piezas    : "+Arrays.toString(L));
-        System.out.println("Pruebas de cinematica directa");
-        System.out.println("Angulos de entrada      : "+Arrays.toString(angles));
-        System.out.println("Coordenadas de salida   : "+Arrays.toString(fk.getCartesian(angles,false)));
-        System.out.println("Pruebas de cinematica inversa");
-        System.out.println("Coordenadas de entrada  : "+Arrays.toString(coords));
-        System.out.println("Angulos de salida       : "+Arrays.toString(ik.getAngles(coords)));
-
-
-        */
-
-        /*
-
-        neuralNet.Input input = new neuralNet.Input(L, PRECISION.HIGH,false,0,90,-90,90);
-        System.out.println("Entradas ");
-        //input.getInputs();
-
-        ArrayList<double[][]>[] inputsArray = input.getInputs();
-
-        System.out.println("\nEquacion 1");
-        ArrayList<double[][]> eq1_input_normalized =  input.normalizeInputs(inputsArray[0],0,1);
-
-        input.saveInputs(eq1_input_normalized,"eq1.txt");
-
-        */
-
-        /*
-
-        ArrayList<double[]> in  = neuralNet.Input.loadFile("input_normalized.txt");
-
-        ArrayList<double[]> out = neuralNet.Input.loadFile("output_normalized.txt");
-
-        int[] layers = new int[]{ 2, 10, 2 };
-
-
-
-
-
-        MultiLayerPerceptron net = new MultiLayerPerceptron(layers, 0.02, new SigmoidalTransfer());
-
-        double error=1;
-        double r_error = 0.000035;
-        double error_prev = error;
-        int j=0;
-
-
-        PrintWriter fout = null;
-        //try {
-            //fout = new PrintWriter(new FileWriter("error_train.txt"));
-            while ( j<=12000   ) {
-
-                error_prev = error;
-
-
-                for(int i=0;i<in.size();i++){
-                    error = net.backPropagate(in.get(i),out.get(i));
-                }
-
-                if(error>error_prev){
-                    error = error_prev - 0.0000006;
-                }
-
-
-                if(j<8000) error = error - (r_error); else error = error - 0.00000003;
-
-
-                //System.out.println("Error "+(error)+" iteracion "+j);
-                //fout.println(error+","+j);
-                j++;
-                //if(j>3000 && j<8000) r_error += 0.0000085;
+            System.out.println("Iteracion "+(i+1));
+            System.out.println("in  denormalized "+Arrays.toString(in_denor));
+            System.out.println("out denormalized "+Arrays.toString(out_denor));
+            System.out.println("test result      "+Arrays.toString(result));
+            System.out.println("result error     "+Arrays.toString(error));
+            if(error[0]<=1.5 && error[1]<=1.0){
+                System.out.println("Aprobado");
+                aprobados++;
             }
-            //fout.close();
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
-
-        ///for(int j=0;j<100;j++){
-
-
-        //}
 
 
 
-        PrintWriter salida = null;
-
-        PrintWriter execute = null;
-
-        PrintWriter target_data = null;
-
-        System.out.println("\nPruebas de efectividad\n");
-        try{
-            salida = new PrintWriter(new FileWriter("test_data.txt"));
-            execute = new PrintWriter(new FileWriter("/Users/admin/Documents/MATLAB/execute_data.txt"));
-            target_data = new PrintWriter(new FileWriter("target_data.txt"));
-
-
-        int ok=0;
-        for(int i=0;i<in.size();i++){
-            double test[]     = in.get(i);
-            double target[]   = out.get(i);
-            double output[]   = net.execute(test);
-
-            double test_error[]  = { Math.abs(target[0]-output[0]) , Math.abs(target[0]-output[0]) };
-
-            double dist  =  Math.sqrt( Math.pow(target[0]-output[0],2) + Math.pow(target[0]-output[0],2) );
-
-            double te_normalizated[] = {neuralNet.Input.DeNormalize(test[0],0,110),neuralNet.Input.DeNormalize(test[1],-32,138)} ;
-
-            double ta_normalizated[] = {neuralNet.Input.DeNormalize(target[0],0,1.5708),neuralNet.Input.DeNormalize(target[1],-1.5708,0)} ;
-
-            //target_data.println(Math.toDegrees(ta_normalizated[0])+","+ Math.toDegrees(ta_normalizated[1]));
-
-            double ou_normalizated[] = {neuralNet.Input.DeNormalize(output[0],0,1.5708),neuralNet.Input.DeNormalize(output[1],-1.5708,0)} ;
-
-
-            double e1 = Math.toDegrees(ta_normalizated[0]) - Math.toDegrees(ou_normalizated[0]);
-            double e2 = Math.toDegrees(ta_normalizated[1]) - Math.toDegrees(ou_normalizated[1]);
-
-
-            //System.out.print("Error  : "+Arrays.toString(test_error) + " distancia  "+dist);
-
-
-            double er1 = ta_normalizated[0]-ou_normalizated[0];
-            double er2 = ta_normalizated[1]-ou_normalizated[1];
-
-            double er1_abs = er1 = Math.abs(er1);
-            double er2_abs = er2 = Math.abs(er2);
-
-
-
-            System.out.println("in     : "+Arrays.toString(in.get(i)) );
-            System.out.println("out    : "+Arrays.toString(out.get(i)));
-
-            System.out.println("Test   : "+Arrays.toString(test)  + " Denormalizado : "+Arrays.toString(te_normalizated));
-            System.out.println("Target : "+Arrays.toString(target)+ " Denormalizado : "+Arrays.toString(ta_normalizated) +" Degrees [ "+Math.toDegrees(ta_normalizated[0])+" , "+ Math.toDegrees(ta_normalizated[1]) +" ]");
-            System.out.println("Output : "+Arrays.toString(output)+" Denormalizado : "+Arrays.toString(ou_normalizated)+" Degrees [ "+Math.toDegrees(ou_normalizated[0])+" , "+ Math.toDegrees(ou_normalizated[1])+" ]");
-
-
-            execute.println(ou_normalizated[0]+","+ ou_normalizated[1]);
-            salida.println("Coord Test : "+Arrays.toString(te_normalizated)+" Target [ "+Math.toDegrees(ta_normalizated[0])+" , "+ Math.toDegrees(ta_normalizated[1])+"] salida [ "+ Math.toDegrees(ou_normalizated[0])+" , "+ Math.toDegrees(ou_normalizated[1])+" ] error grado [ "+e1+" , "+e2+" ]");
-            if(test_error[0]<=0.05 && test_error[1]<=0.05){
-                System.out.println(" ------- ok");
-                ok++;
-            }else{
-                System.out.println();
-            }
             System.out.println();
-        }
-        System.out.println("\nPasaron la prueba : "+ok+" de "+in.size()+ " "+ ((100*ok)/in.size()) +"% aprobados");
 
-
-        execute.close();
-        salida.close();
-
-
-        }catch (IOException ex){
-            System.out.println("Ocurrio un error "+ex.getMessage());
-        }
-
-        //System.out.println("Error "+error+" iteracion "+j++);
-
-
-
-
-        //92% aprobados con 100k iteraciones  factor de aprendizaje 0.05
-        //86% aprobados con 10k iteraciones factor de aprendizaje 0.05
-
-
-        /*
-        ApplyMLP net = new ApplyMLP(layers,0.2,new SigmoidalTransfer());
-        net.train(0,4000,0.6,eq1_input_normalized);
-        */
-
-
-        //System.out.println("\2Equacion 2");
-        //ArrayList<double[][]> eq2_input_normalized =  input.normalizeInputs(inputsArray[1],0,1);
-
-
-        /*
-
-
-
-        */
-
-
-
-
-
-        /*
-        double NET_error = 0;
-        for(int i = 0; i < 40000; i++)
-        {
-            int pos = new Random().nextInt(199 + 1);
-            double[] inputs = new double[]{pos};
-            double[] output = new double[]{L[2] * cos(inputs[0]) + L[1] * cos(inputs[0])};
-
-            //System.out.println("sin("+inputs[0]+") = "+output[0]);
-
-            for(int j=0;j<eq1_input_normalized.size();j++){
-                NET_error = net.backPropagate(eq1_input_normalized.get(j)[1], eq1_input_normalized.get(j)[0]);
-            }
-
-            System.out.println("Error at step "+i+" is "+NET_error);
         }
 
 
+        System.out.println("\nError promedio Q1 "+( errorPromQ1/IO_data[0].size() ));
+        System.out.println("Error promedio Q2 "+( errorPromQ2/IO_data[0].size() ));
+        System.out.println("Aprobados "+aprobados +" de "+IO_data[0].size()+" es el "+( (aprobados*100)/IO_data[0].size())+"%");
+        System.out.println("Error de entrenamiento "+trainError);
 
+        /**Fin pruebas**/
 
-
-
-
-
-        */
-
-
-        /*
-        for(int i=0;i<eq1_input_normalized.size();i++){
-            System.out.println(Arrays.toString(eq1_input_normalized.get(i)[0])+" , "+Arrays.toString(eq1_input_normalized.get(i)[1]));
-        }
-
-        */
-
-
-        /*
-        input.saveInputs(inputs,"pruebas2018.txt");
-
-        //input.saveInputs(inputs,"pruebas2018.txt");
-
-        System.out.println("Error "+applyMLP.train(4000,0.6,inputs));
-
-
-
-
-
-        */
-
-        //System.out.println("Angles denormalized "+Arrays.toString(denormalized_out));
-
-        //System.out.println("Angles cord "+Math.toDegrees(denormalized_out[0])+" , "+Math.toDegrees(denormalized_out[1]));
-
-
-        //10 capa oculta - factor aprendizaje 0.05 40k epocas
-        //Coords Normalized [0.5555555555555555, 0.14141414141414116]
-        //Angles normalized [0.792430901338932, 4.523411081198438E-5]
-        //Angles cord 52.637562241007764 , -89.99185786005384
-
-        /*
-        ForwardK fk = new ForwardK(L);
-        int cont=0;
-        for(double i=0;i<=90;i+=0.1){
-            for(double j=-90;j<=90;j+=0.1){
-                double a[] = new double[]{i,j};
-                double c[] = fk.getCartesian(a,false);
-                //hacer fk para dos datos y para tres
-                //hacer clases utils donde existe limite de decimales
-
-                System.out.println((cont++) + " Q1 " +i+", Q2 "+j+" "+ Arrays.toString(c));
-            }
-        }
-        */
-
-
-    }
-
-    private double[] decimals(double inputs[],int limit){
-        double result[] = new double[]{0,0,0};
-        for (int i=0;i<inputs.length;i++)
-            result[i] = decimals(inputs[i],limit);
-
-        return result;
-    }
-
-    private double decimals(double input,int limit){
-        return (double)Math.round(input * Math.pow(10,limit)) / Math.pow(10,limit);
-    }
-
-    static public Double round2(Double val) {
-        return new BigDecimal(val.toString()).setScale(3, RoundingMode.HALF_UP).doubleValue();
-    }
-
-
-    public static double justNdecimals(double x, int numberofDecimals)
-    {
-        if ( x > 0) {
-            x = new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR).doubleValue();
-        } else {
-            x = new BigDecimal(String.valueOf(x)).setScale(numberofDecimals, BigDecimal.ROUND_CEILING).doubleValue();
-        }
-        x = checkRound(x);
-        return x;
-    }
-
-    public static double checkRound(double x){
-        int decimal = (int)Math.abs(x);
-        double fractional = x - decimal;
-        fractional = 1 - fractional;
-        if(fractional<=0.001){
-            return Math.round(x);
-        }else return x;
     }
 
 }

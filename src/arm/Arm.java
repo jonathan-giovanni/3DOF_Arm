@@ -7,15 +7,15 @@ import processing.core.PShape;
  *
  * * Sistema de coordenadas en libreria
  *
- *            +Z  -Y
+ *            +Z  -X
  *             |  /
  *             | /
  *             |/
- *    -X ------/------- +X
+ *    -Y ------/------- +Y
  *            /|
  *           / |
  *          /  |
- *        +Y  -Z
+ *        +X  -Z
  *
  */
 
@@ -34,9 +34,6 @@ public class Arm {
     public Arm(PApplet pApplet){
         context     = pApplet;
 
-        //L[0] -> base
-        //L[1] -> antebrazo
-        //L[2] -> brazo
         L = new double[]{28,50,60};//longitud del brazo
         Q = new double[]{0,0,0};//angulos
 
@@ -65,41 +62,30 @@ public class Arm {
             Q[1] = Math.toRadians(q[1]);
             Q[2] = Math.toRadians(q[2]);
         }
-
-        //Q[0] = -1*Q[0];
-
-
-
-
     }
 
 
     /**
-     * dibuja el brazo con cada uno de sus elementos
+     * Dibuja el brazo con cada uno de sus elementos
      */
     public void drawArm(){
         context.pushMatrix();
         /**     base no rotatoria   **/
         context.fill(120, 120, 120,100);
         context.translate(0,0,0);
-        //context.rotateX(context.PI);
         context.shape(base);
 
         /**     base rotatoria      **/
         context.fill(255, 200, 75,100);
         context.translate(0, 0, 4);//para que se posicione arriba
         float anguloBase = (float) (-Q[0]  + Math.PI/2);
-        System.out.println("Base rotatoria real:      "+anguloBase);
         context.rotateY(anguloBase);//gamma
-        //context.rotateY( (float) Math.PI-  (float)Q[0]);
-        //context.rotate(context.PI);
         context.shape(shoulder);
         /**     antebrazo           **/
         context.fill(60, 200, 130,100);
         context.translate(0, 0, 25);
         context.rotateY(context.PI);
         float anguloAntebrazo = (float) (-Q[1]);
-        System.out.println("Antebrazo  real :     "+ anguloAntebrazo);
         context.rotateX(anguloAntebrazo);//alpha
         context.shape(upArm);
         /**      brazo               **/
@@ -107,7 +93,6 @@ public class Arm {
         context.translate(0, -50, 0);
         context.rotateY(context.PI);
         float anguloBrazo= (float) (Q[2]  );
-        System.out.println("Brazo real :        "+anguloBrazo);
         context.rotateX(anguloBrazo);//beta
         context.shape(loArm);
         /**     orientacion         **/
