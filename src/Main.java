@@ -25,11 +25,7 @@ public class Main {
         Window pWindow = new frmArmController();
         PApplet.main(pWindow.getClass());
 
-
         /** Pruebas
-
-
-
 
         double L[] = {28,50,60};
 

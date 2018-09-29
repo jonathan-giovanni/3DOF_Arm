@@ -7,6 +7,8 @@ import utils.Numerics;
 import utils.PRECISION;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -269,6 +271,13 @@ public class frmArmController extends Window{
         txtZNet.addActionListener(n->{
             double v =  Numerics.justNdecimals( Double.parseDouble(txtZ.getText()),1);
             applyANN(2,v);
+        });
+
+        lblStateNet.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                applyMLP.round = !applyMLP.round;
+            }
         });
 
 

@@ -89,7 +89,7 @@ public class Window extends PApplet {
         scale(zoom);
 
         userInput();
-        //drawAxes();
+        drawAxes();
 
         scale(-1);// invierte
 
